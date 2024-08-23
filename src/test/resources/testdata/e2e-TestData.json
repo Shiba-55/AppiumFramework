@@ -1,0 +1,136 @@
+{
+  "testData": {
+    "UI-ecom": {
+      "Title": "Create New Store"
+    },
+    "UI-smoke": {
+      "Jurisdiction": "Alabama",
+      "Continue with Email": "Butter@2024",
+      "Username": "AUTOUser1_FLADEMO2_AUTO",
+      "Phone Number Field": "AUTOUser1_FLADEMO2_AUTO",
+      "Continue with Google": "Butter@2024",
+      "Password": "Butter@2024"
+    },
+    "UI-Ecom": {
+      "Title": "Create New Store."
+    },
+    "API-Scenario1": {
+      "11": {
+        "headers": "sec-ch-ua\u003d\"Not)A;Brand\";v\u003d\"99\", \"Google Chrome\";v\u003d\"127\", \"Chromium\";v\u003d\"127\" | sec-ch-ua-mobile\u003d?0 | Accept\u003dtext/html, */*; q\u003d0.01 | X-Requested-With\u003dXMLHttpRequest | sec-ch-ua-platform\u003d\"Windows\" | Referer\u003dhttps://uat.firelighteapp.com/EGApp/ | User-Agent\u003dMozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36",
+        "endpoint": "",
+        "field": "",
+        "auth": "",
+        "params": "",
+        "body": "",
+        "script": ""
+      },
+      "1": {
+        "headers": "sec-ch-ua\u003d\"Not)A;Brand\";v\u003d\"99\", \"Google Chrome\";v\u003d\"127\", \"Chromium\";v\u003d\"127\" | sec-ch-ua-mobile\u003d?0 | Upgrade-Insecure-Requests\u003d1 | sec-ch-ua-platform\u003d\"Windows\" | User-Agent\u003dMozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36",
+        "endpoint": "",
+        "field": "",
+        "auth": "",
+        "params": "",
+        "body": "",
+        "script": ""
+      },
+      "2": {
+        "headers": "sec-ch-ua\u003d\"Not)A;Brand\";v\u003d\"99\", \"Google Chrome\";v\u003d\"127\", \"Chromium\";v\u003d\"127\" | sec-ch-ua-mobile\u003d?0 | Accept\u003dapplication/json | sec-ch-ua-platform\u003d\"Windows\" | Referer\u003dhttps://automationintesting.online/ | User-Agent\u003dMozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36",
+        "endpoint": "",
+        "field": "",
+        "auth": "",
+        "params": "",
+        "body": "",
+        "script": ""
+      },
+      "APICounts": "3",
+      "3": {
+        "headers": "sec-ch-ua\u003d\"Not)A;Brand\";v\u003d\"99\", \"Google Chrome\";v\u003d\"127\", \"Chromium\";v\u003d\"127\" | sec-ch-ua-mobile\u003d?0 | Accept\u003dapplication/json, text/plain, */* | sec-ch-ua-platform\u003d\"Windows\" | Referer\u003dhttps://automationintesting.online/ | User-Agent\u003dMozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36",
+        "endpoint": "",
+        "field": "",
+        "auth": "",
+        "params": "",
+        "body": "",
+        "script": ""
+      },
+      "4": {
+        "headers": "sec-ch-ua\u003d\"Not)A;Brand\";v\u003d\"99\", \"Google Chrome\";v\u003d\"127\", \"Chromium\";v\u003d\"127\" | sec-ch-ua-mobile\u003d?0 | Accept\u003dapplication/json | sec-ch-ua-platform\u003d\"Windows\" | Referer\u003dhttps://automationintesting.online/ | User-Agent\u003dMozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 | Content-Type\u003dapplication/json",
+        "endpoint": "",
+        "field": "",
+        "auth": "",
+        "params": "",
+        "body": "{\"name\":\"test\",\"email\":\"tet@te.com\",\"phone\":\"01234567890\",\"subject\":\"test to book a room\",\"description\":\"test to book a room and day and night\"}]",
+        "script": ""
+      },
+      "5": {
+        "headers": "sec-ch-ua\u003d\"Not)A;Brand\";v\u003d\"99\", \"Google Chrome\";v\u003d\"127\", \"Chromium\";v\u003d\"127\" | sec-ch-ua-mobile\u003d?0 | Accept\u003dapplication/json | sec-ch-ua-platform\u003d\"Windows\" | Referer\u003dhttps://automationintesting.online/ | User-Agent\u003dMozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36",
+        "endpoint": "",
+        "field": "",
+        "auth": "",
+        "params": "",
+        "body": "",
+        "script": ""
+      },
+      "6": {
+        "headers": "sec-ch-ua\u003d\"Not)A;Brand\";v\u003d\"99\", \"Google Chrome\";v\u003d\"127\", \"Chromium\";v\u003d\"127\" | sec-ch-ua-mobile\u003d?0 | Accept\u003dapplication/json | sec-ch-ua-platform\u003d\"Windows\" | Referer\u003dhttps://automationintesting.online/ | User-Agent\u003dMozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 | Content-Type\u003dapplication/json",
+        "endpoint": "",
+        "field": "",
+        "auth": "",
+        "params": "",
+        "body": "{\"bookingdates\":{\"checkin\":\"\",\"checkout\":\"\"},\"depositpaid\":false,\"firstname\":\"test\",\"lastname\":\"last\",\"roomid\":1,\"email\":\"test@te.com\",\"phone\":\"01234567890\"}]",
+        "script": ""
+      },
+      "7": {
+        "headers": "sec-ch-ua\u003d\"Not)A;Brand\";v\u003d\"99\", \"Google Chrome\";v\u003d\"127\", \"Chromium\";v\u003d\"127\" | X-ZCSRF-TOKEN\u003diamcsrcoo\u003d61efe1c3-f4a8-4a4c-aaec-81565c346512 | sec-ch-ua-mobile\u003d?0 | Accept\u003d*/* | X-Requested-With\u003dXMLHttpRequest | sec-ch-ua-platform\u003d\"Windows\" | User-Agent\u003dMozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 | Referer\u003dhttps://accounts.zoho.in/signin?servicename\u003dAaaServer\u0026serviceurl\u003dhttps%3A%2F%2Faccounts.zoho.com%2Fhome | Content-Type\u003dapplication/x-www-form-urlencoded;charset\u003dUTF-8",
+        "endpoint": "",
+        "field": "",
+        "auth": "",
+        "params": "",
+        "body": "",
+        "script": ""
+      },
+      "8": {
+        "headers": "sec-ch-ua\u003d\"Not)A;Brand\";v\u003d\"99\", \"Google Chrome\";v\u003d\"127\", \"Chromium\";v\u003d\"127\" | X-ZCSRF-TOKEN\u003diamcsrcoo\u003d61efe1c3-f4a8-4a4c-aaec-81565c346512 | sec-ch-ua-mobile\u003d?0 | sec-ch-ua-platform\u003d\"Windows\" | Referer\u003dhttps://accounts.zoho.in/signin?servicename\u003dAaaServer\u0026serviceurl\u003dhttps%3A%2F%2Faccounts.zoho.com%2Fhome | User-Agent\u003dMozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 | Content-Type\u003dapplication/x-www-form-urlencoded;charset\u003dUTF-8",
+        "endpoint": "",
+        "field": "",
+        "auth": "",
+        "params": "",
+        "body": "",
+        "script": ""
+      },
+      "9": {
+        "headers": "sec-ch-ua\u003d\"Not)A;Brand\";v\u003d\"99\", \"Google Chrome\";v\u003d\"127\", \"Chromium\";v\u003d\"127\" | X-ZCSRF-TOKEN\u003diamcsrcoo\u003d61efe1c3-f4a8-4a4c-aaec-81565c346512 | sec-ch-ua-mobile\u003d?0 | sec-ch-ua-platform\u003d\"Windows\" | Referer\u003dhttps://accounts.zoho.in/signin?servicename\u003dAaaServer\u0026serviceurl\u003dhttps%3A%2F%2Faccounts.zoho.com%2Fhome | User-Agent\u003dMozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 | Content-Type\u003dapplication/x-www-form-urlencoded;charset\u003dUTF-8",
+        "endpoint": "",
+        "field": "",
+        "auth": "",
+        "params": "",
+        "body": "{\"passwordauth\":{\"password\":\"0-v1-hJoUs9giTQiAUCDGO60kj0SS89h8GfBw7sRHuLb8tfd+bJe8oGPz+/9qfgCxXsmX7YYLKyOWg6e/LlLCOmqcbHeWBKbaVWWsb5UR7lGj8suMmwvBLYS2of9czxOg+fSgsaJW/ZFeOFG+PTuuGFY6z/8jrGUG1XGQ+eMMaO/Z7ZWOWtWUQbI0137klefyZyhbDVSJXQN9UziDXSPz1wCYXE7IewnQUUzAGz/vaEwnPRd43w4LEgYesOri5DED7O240JEMVa0A1tqyr7uq05hQ7CWgMPLWotpZrj4bhX7b5rR0tZ1vW+k+z0GCfwP0vu4JQ41geUdQtJa2peVgMZHcXQ\u003d\u003d-P1BJzFC7+wAaiE3MoS/iya84JqhJKwgW\"}}]",
+        "script": ""
+      },
+      "10": {
+        "headers": "sec-ch-ua\u003d\"Not)A;Brand\";v\u003d\"99\", \"Google Chrome\";v\u003d\"127\", \"Chromium\";v\u003d\"127\" | sec-ch-ua-mobile\u003d?0 | Upgrade-Insecure-Requests\u003d1 | sec-ch-ua-platform\u003d\"Windows\" | Referer\u003dhttps://accounts.zoho.in/signin?servicename\u003dAaaServer\u0026serviceurl\u003dhttps%3A%2F%2Faccounts.zoho.com%2Fhome | User-Agent\u003dMozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36",
+        "endpoint": "",
+        "field": "",
+        "auth": "",
+        "params": "",
+        "body": "",
+        "script": ""
+      }
+    },
+    "UI-Scenario1": {
+      "input_Login_Password": "Password1@3",
+      "input_Restful-booker-platform demo_Subject": "test to book a room",
+      "input_Restful-booker-platform demo_Lastname": "last",
+      "input_Restful-booker-platform demo_Firstname": "test",
+      "input_Zoho Accounts_bethoven001@gmail.com": "bethoven001@gmail.com",
+      "input_Login_UserName": "ashwani_fil",
+      "input_Zoho Accounts_Chu$2507": "Chu$2507",
+      "input_Restful-booker-platform demo_Phone": "01234567890",
+      "input_Restful-booker-platform demo_Name": "test",
+      "input_Restful-booker-platform demo_Email": "test@te.com",
+      "textarea_Restful-booker-platform demo_Description": "Test to book a room and day and night"
+    },
+    "UI-ecom2": {
+      "Title": "Create New Store"
+    }
+  }
+}

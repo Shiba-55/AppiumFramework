@@ -1,0 +1,276 @@
+parameters:
+- name: environment
+  displayName: Environment
+  type: string
+  default: 'qa'
+  values:
+  - 'qa'
+  - 'qanext'
+
+- name: applicationType
+  displayName: applicationType
+  type: string
+  default: 'app'
+  values:
+  - 'app'
+  - 'admin'
+
+- name: testType
+  displayName: Test Type
+  type: string
+  default: 'End2EndTest'
+  values:
+  - 'CICD'
+  - 'End2EndTest'
+  - 'RegressionTest'
+  - 'RegressionAdmin'
+
+- name: browser
+  displayName: browser
+  type: string
+  default: 'Edge'
+  values:
+  - 'Chrome'
+  - 'Firefox'
+  - 'Edge'
+
+
+- name: adminCacheTime
+  displayName: adminCacheTime
+  type: string
+  default: '5'
+  values:
+  - '5'
+  - '6'
+  - '7'
+
+- name: captureScreenshot
+  displayName: Capture Screenshot
+  type: boolean
+  default: true
+  values:
+  - true
+  - false
+
+- name: headlessExecutionswitch
+  displayName: headlessExecutionswitch
+  type: boolean
+  default: true
+  values:
+  - true
+  - false  
+
+- name: vmName
+  displayName: VM Name
+  type: string
+  default: '10.125.100.4'
+
+variables:
+  artifactName: 'firelight-ui-automation-1.0-SNAPSHOT.$(Build.BuildNumber)'
+  pathToPublish: 'D:\a\1\s\target\firelight-ui-automation-1.0-SNAPSHOT.jar'
+  qaTargetPath: '\\flt-az-pd-qa.insurancetechnologies.com\TestShare'
+  allureBinPath: 'C:\Users\sxa1222\scoop\apps\allure\2.27.0\bin' # Define the path to the Allure executable
+
+trigger:
+  branches:
+    include:
+      - master  # Adjust branch name as needed
+
+pool:
+  vmImage: 'windows latest'
+
+resources:
+  pipelines:
+  - pipeline: Dummyrepo-ci # Name of the pipeline resource.
+    source: Dummyrepo # The name of the pipeline referenced by this pipeline resource.
+    project: FLTTestAutomation # Required only if the source pipeline is in another project
+    trigger: true # Run app-ci pipeline when any run of security-lib-ci completes
+      # branches:
+      #   include: 
+      #    - main	
+
+stages:
+- stage: Build
+  jobs:
+  - job:
+    steps:
+    - task: Maven@3
+      inputs:
+        mavenPomFile: 'pom.xml'
+        goals: 'package -DskipTests'
+
+    - task: PowerShell@2
+      displayName: 'Print Test Type'
+      inputs:
+        targetType: inline
+        script: |
+          Write-Host "Test Type: ${{ parameters.testType }}" 
+
+    - task: PublishBuildArtifacts@1
+      inputs:
+          pathToPublish: '$(pathToPublish)'
+          artifactName: '$(artifactName)'
+          publishLocation: 'Container'
+
+- stage: Deployment
+  pool: 
+    name: "FL_Test_Automation"
+  jobs:
+  - job: 
+    timeoutInMinutes: 940
+    steps: 
+    - ${{ if eq(parameters.environment, 'qa') }}:
+
+      - task: PowerShell@2
+        displayName: 'Clean up old artifacts for QA'
+        inputs:
+            targetType: inline
+            script: |
+              Get-ChildItem -Path "$(qaTargetPath)" | Sort-Object LastWriteTime -Descending | Select-Object -Skip 2 | Remove-Item -Force -Recurse -ErrorAction SilentlyContinue
+      - task: DownloadPipelineArtifact@2
+        displayName: 'Download Pipeline Artifact for QA'
+        inputs:
+          artifactName: '$(artifactName)'
+          targetPath: '$(qaTargetPath)\$(Build.BuildNumber)'
+      - task: PowerShell@2
+        displayName: 'Save Parameters to File'
+        inputs:
+          targetType: inline
+          script: |
+            $envFile = "$(qaTargetPath)\$(Build.BuildNumber)\parameters.env"
+            Set-Content -Path $envFile -Value "environment=${{ parameters.environment }}`n"
+            Add-Content -Path $envFile -Value "applicationType=${{ parameters.applicationType }}`n"
+            Add-Content -Path $envFile -Value "testType=${{ parameters.testType }}`n"
+            Add-Content -Path $envFile -Value "browser=${{ parameters.browser }}`n"
+            Add-Content -Path $envFile -Value "adminCacheTime=${{ parameters.adminCacheTime }}`n"
+            Add-Content -Path $envFile -Value "captureScreenshot=${{ parameters.captureScreenshot }}`n"
+            Add-Content -Path $envFile -Value "vmName=${{ parameters.vmName }}`n"  
+      - task: PowerShell@2
+        displayName: 'Check if parameters.env file exists'
+        inputs:
+          targetType: inline
+          script: |
+            $envFilePath = "$(qaTargetPath)\$(Build.BuildNumber)\parameters.env"
+            if (Test-Path $envFilePath) {
+              Write-Host "parameters.env file exists at: $envFilePath"
+            } else {
+              Write-Host "parameters.env file does not exist at: $envFilePath"
+            }
+      - task: CopyFiles@2
+        displayName: 'Copy Env File to Target Server'
+        inputs:
+          SourceFolder: '$(qaTargetPath)\$(Build.BuildNumber)'
+          Contents: 'parameters.env'
+          TargetFolder: '$(qaTargetPath)\$(Build.BuildNumber)'
+
+      - powershell: |
+          $filePath = "src/test/resources/other/config.properties"
+          $content = Get-Content $filePath
+          $content = $content -replace 'environment=qanext', "environment=${{ parameters.environment }}"
+          $content = $content -replace 'applicationType=app', "applicationType=${{ parameters.applicationType }}"
+          $content = $content -replace 'browser=Chrome', "browser=${{ parameters.browser }}"
+          $content = $content -replace 'headlessExecution.switch=false', "headlessExecution.switch=${{ parameters.headlessExecutionswitch }}"
+          $content = $content -replace 'adminCacheTime=5', "adminCacheTime=${{ parameters.adminCacheTime }}"
+          $content | Set-Content $filePath
+        displayName: 'Replace Content in config.properties' 
+
+      - powershell: |
+          $filePath = "src/test/java/com/hexure/firelight/runner/RunFireLightTest.java"
+          $content = Get-Content $filePath
+          $content = $content -replace '@JenkinsTest', '@${{ parameters.testType }}'
+          $content | Set-Content $filePath
+        displayName: 'Replace Content in RunFireLightTest.java'
+
+        
+      - task: Maven@3
+        inputs:
+          mavenPomFile: 'pom.xml'
+          goals: 'test'
+        displayName: 'MVN Test'
+        condition: succeededOrFailed()
+          
+    - script: |
+        cd $(Agent.BuildDirectory)/s/target/
+        $(allureBinPath)\allure generate --single-file allure-results
+      displayName: 'Generate Allure Report'
+      condition: succeededOrFailed()
+    - task: PublishBuildArtifacts@1
+      inputs:
+        pathtoPublish: '$(Agent.BuildDirectory)/s/target/allure-report'
+        artifactName: 'allure-report'
+        publishLocation: 'Container'
+      condition: succeededOrFailed()
+
+    - task: PowerShell@2
+      displayName: 'Rename Allure Report File'
+      inputs:
+        targetType: 'inline'
+        script: |
+          $newReportName = 'CICD allure-report.html'
+          $originalReportPath = [System.IO.Path]::Combine($env:Agent_BuildDirectory, 's', 'target', 'allure-report', 'index.html')
+          $newReportPath = [System.IO.Path]::Combine($env:Agent_BuildDirectory, 's', 'target', 'allure-report', 'CICD allure-report.html')
+
+          try {
+              Move-Item -Path $originalReportPath -Destination $newReportPath -Force
+          } catch {
+              Write-Error "Failed to rename report: $_"
+          }
+      condition: succeededOrFailed()
+
+    - task: PowerShell@2
+      displayName: 'Send Allure Reports via Email'
+      inputs:
+        targetType: 'inline'
+        script: |
+          function Send-EmailWithSendGrid {
+              Param
+              (
+                  [Parameter(Mandatory=$true)]
+                  [string] $From,
+
+                  [Parameter(Mandatory=$true)]
+                  [String[]] $Recipient,
+
+                  [Parameter(Mandatory=$true)]
+                  [string] $ApiKey,
+
+                  [Parameter(Mandatory=$true)]
+                  [string] $Subject,
+
+                  [Parameter(Mandatory=$true)]
+                  [string] $Body
+
+              )
+
+              $headers = @{
+                      "Authorization" = "Bearer $apiKey"
+                      "Content-Type"  = "application/json"
+              }
+
+              $personalizations = @(
+                      @{
+                          to      = $Recipient | ForEach-Object { @{ email = $_ } }
+                          subject = $Subject
+                      }
+                  )
+
+              $jsonRequest = @{
+                      personalizations = $personalizations
+                      from             = @{ email = $From }
+                      content          = @( @{ type = "text/plain"; value = $Body } )
+                  } | ConvertTo-Json -Depth 10   
+              Invoke-RestMethod   -Uri "https://api.sendgrid.com/v3/mail/send" -Method Post -Headers $headers -Body $jsonRequest 
+          }
+          $MailParams = @{ 
+                  From = "SHAHNAWAZ.ASHRAF@codeelan.com"
+                  Recipient      = @("SHAHNAWAZ.ASHRAF@codeelan.com", "akshat.atre@codeelan.com")
+                  APIKey = "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"
+                  Subject = "Allure Report for qa environment"
+                  Body = 'The execution is complete, and here is the link: file:///C:/agent/_work/2/s/target/allure-report/CICD%20allure-report.html. Please follow the steps below:
+                            1.Right-click on the link, then select "Copy link text."
+                            2.Log in to the VM.
+                            3.Paste the URL in the VM.'
+                }
+
+          Send-EmailWithSendGrid @MailParams
+      condition: succeededOrFailed()
