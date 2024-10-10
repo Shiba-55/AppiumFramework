@@ -1,4 +1,4 @@
-package com.hexure.firelight.runner.TestCases;
+package com.ce.runner.TestCases;
 
 import io.cucumber.junit.Cucumber;
 import io.cucumber.junit.CucumberOptions;
@@ -18,7 +18,7 @@ import org.junit.runner.RunWith;
         },
         features = {"classpath:"},
 		tags = "@UI-ecom",
-        glue = {"com.hexure.firelight.stepdefinitions"},
+        glue = {"com.ce.stepdefinitions"},
         monochrome = true,
         publish = true
 )
@@ -28,7 +28,6 @@ public class UI_ecom_RunTest {
         // Add the UniqueTestCounter listener to your test run
         JUnitCore core = new JUnitCore();
         core.addListener(new UniqueTestCounter());
-
         // Run your tests
         core.run(UI_ecom_RunTest.class);
     }

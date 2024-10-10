@@ -1,18 +1,18 @@
-package com.hexure.firelight.stepdefinitions;
+package com.ce.stepdefinitions;
 
-import com.hexure.firelight.libraies.TestContext;
-import com.hexure.firelight.pages.E2EFlowDataPage;
+import com.ce.libraies.TestContext;
+import com.ce.pages.E2EFlowDataPage;
 import io.cucumber.java.en.Given;
+import org.jetbrains.annotations.NotNull;
 
 
 public class ExcelToJSONStepDefinitions {
 
     private final E2EFlowDataPage onE2EFlowDataPage;
-    private final TestContext testContext;
 
-    public ExcelToJSONStepDefinitions(TestContext context) {
-        onE2EFlowDataPage = context.getPageObjectManager().getE2EFlowDataPage();
-        this.testContext = context;
+    public ExcelToJSONStepDefinitions( TestContext context) {
+     //   onE2EFlowDataPage = context.getPageObjectManager().getE2EFlowDataPage();
+        onE2EFlowDataPage = new E2EFlowDataPage();
     }
 
     /**

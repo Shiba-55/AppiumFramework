@@ -1,30 +1,27 @@
-package com.hexure.firelight.libraies;
+package com.ce.libraies;
 
-import io.appium.java_client.AppiumBy;
+import com.epam.healenium.appium.wrapper.DriverWrapper;
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
 import org.apache.commons.io.FileUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.edge.EdgeOptions;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openqa.selenium.remote.RemoteWebDriver;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.Driver;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.*;
@@ -43,7 +40,7 @@ public class BaseClass {
      */
     protected void loadConfigData(TestContext testContext) {
         readConfigFile();
-        setEnvironment(testContext);
+        //  setEnvironment(testContext);
     }
 
     /**
@@ -53,20 +50,20 @@ public class BaseClass {
      *
      * @param testContext The TestContext class reference
      */
-    private void setEnvironment(TestContext testContext) {
-        if (configProperties.getProperty("execution.mode").trim().equalsIgnoreCase("jenkins")) {
-            testContext.setEnvironment((System.getenv("Environment")));
-            testContext.setCaptureScreenshot((System.getenv("CaptureScreenshot")));
-            testContext.setAppType((System.getenv("ApplicationType")));
-            testContext.setBrowser(System.getenv("Browser"));
-            testContext.setVM_Name(System.getenv("VMName"));
-        } else {
-            testContext.setEnvironment(configProperties.getProperty("environment"));
-            testContext.setCaptureScreenshot(configProperties.getProperty("captureScreenshot.switch"));
-            testContext.setAppType(configProperties.getProperty("applicationType"));
-            testContext.setBrowser(configProperties.getProperty("browser"));
-        }
-    }
+//    private void setEnvironment(TestContext testContext) {
+//        if (configProperties.getProperty("execution.mode").trim().equalsIgnoreCase("jenkins")) {
+//            testContext.setEnvironment((System.getenv("Environment")));
+//            testContext.setCaptureScreenshot((System.getenv("CaptureScreenshot")));
+//            testContext.setAppType((System.getenv("ApplicationType")));
+//            testContext.setBrowser(System.getenv("Browser"));
+//            testContext.setVM_Name(System.getenv("VMName"));
+//        } else {
+//            testContext.setEnvironment(configProperties.getProperty("environment"));
+//            testContext.setCaptureScreenshot(configProperties.getProperty("captureScreenshot.switch"));
+//            testContext.setAppType(configProperties.getProperty("applicationType"));
+//            testContext.setBrowser(configProperties.getProperty("browser"));
+//        }
+//    }
 
     /**
      * @param testContext The TestContext class reference
@@ -80,29 +77,8 @@ public class BaseClass {
      */
     protected AppiumDriver getMobDriver(TestContext testContext) {
         try {
-       //     if (configProperties.getProperty("execution.type").trim().equalsIgnoreCase("local")) {
-//                switch (testContext.getBrowser()) {
-//                    case "Chrome":
-//                        WebDriverManager.chromedriver().setup();
-//                        driver = new ChromeDriver(getChromeOptions());
-//                        break;
-//                    case "Firefox":
-//                        WebDriverManager.firefoxdriver().setup();
-//                        driver = new FirefoxDriver(getFirefoxOptions());
-//                        driver.manage().window().maximize();
-//                        break;
-//                    case "Edge":
-//                        WebDriverManager.edgedriver().setup();
-//                        driver = new EdgeDriver(getEdgeOptions());
-//                        driver.manage().window().maximize();
-//                        break;
-//                    default:
-//                        throw new FLException("Invalid Value Provided For Browser");
-//                }
-//            } else {
-//                driver = new RemoteWebDriver(new URL(testContext.getVM_Name()), getBrowserOptions(testContext.getBrowser()));
-                openMobileApp();
-       //     }
+            openMobileApp();
+
         } catch (Exception e) {
             Log.error("Loading WebDriver failed ", e);
             throw new FLException("Loading WebDriver failed >>>> " + e.getMessage());
@@ -111,7 +87,7 @@ public class BaseClass {
         Log.info("Driver Loaded Successfully.");
         System.out.println("Driver Loaded Successfully.");
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(Integer.parseInt(configProperties.getProperty("implicit_wait"))));
-      //  driver.manage().deleteAllCookies();
+        //  driver.manage().deleteAllCookies();
         Log.info("Implicit Wait Set as {} Seconds", configProperties.getProperty("implicit_wait"));
         testContext.setWait(new WebDriverWait(driver, Duration.ofSeconds(Integer.parseInt(configProperties.getProperty("implicit_wait")))));
         return driver;
@@ -163,7 +139,7 @@ public class BaseClass {
         ChromeOptions chromeOptions = new ChromeOptions();
         chromeOptions.setExperimentalOption("prefs", preferences);
         if (Boolean.parseBoolean(configProperties.getProperty("headlessExecution.switch")))
-            chromeOptions.addArguments("headless", "--disable-gpu", "--window-size=1920,1080","--ignore-certificate-errors");
+            chromeOptions.addArguments("headless", "--disable-gpu", "--window-size=1920,1080", "--ignore-certificate-errors");
         chromeOptions.addArguments("disable-infobars");
         chromeOptions.addArguments("--start-maximized");
         chromeOptions.addArguments("--disable-notifications");
@@ -219,7 +195,7 @@ public class BaseClass {
      * @param testContext The TestContext class reference
      */
     protected void openLoginPage(WebDriver driver, TestContext testContext) {
-    //    testContext.setMapTestData(getTestData(testContext.getTestCaseID(), testContext));
+        //    testContext.setMapTestData(getTestData(testContext.getTestCaseID(), testContext));
 
         String url = configProperties.getProperty("QA.url");
         System.out.println("URL = " + url);
@@ -468,18 +444,19 @@ public class BaseClass {
                 Log.info("TEST CASE {} is PASSED", testContext.getTestCaseID());
         }
 
-        captureScreenshot(driver, testContext, true);
-
-        try {
-            if (driver != null) {
-                driver.quit();
-                Log.info("Driver Quit Successfully");
-            }
-            Log.info("<<<===== END OF TEST =====>>>");
-        } catch (Exception e) {
-            Log.info("Quitting Driver Failed", e);
-            throw new FLException("Quitting Driver Failed " + e.getMessage());
-        }
+        // captureScreenshot(driver, testContext, true);
+        driver.quit();
+        System.out.println("Driver Quit Successfully");
+//        try {
+//            if (driver != null) {
+//                driver.quit();
+//                Log.info("Driver Quit Successfully");
+//            }
+//            Log.info("<<<===== END OF TEST =====>>>");
+//        } catch (Exception e) {
+//            Log.info("Quitting Driver Failed", e);
+//            throw new FLException("Quitting Driver Failed " + e.getMessage());
+//        }
     }
 
     /**
@@ -513,91 +490,64 @@ public class BaseClass {
     public void openMobileApp() {
         DesiredCapabilities cap = getDesiredCapabilities();
         URL url = null;
-        try{
+        try {
             url = new URL("http://127.0.0.1:4723/");
         } catch (MalformedURLException m) {
             m.printStackTrace();
         }
-        // assert url != null;
-        driver = new AppiumDriver(url, cap);
+
+//        AppiumDriver driver = new AppiumDriver(url, cap);
+        AndroidDriver androidDriver = new AndroidDriver(url, cap);
+        if (androidDriver.isDeviceLocked()) {
+            androidDriver.unlockDevice();
+        }
+        driver = androidDriver;
         new TestContext().setMobDriver(driver);
-//        if (driver == null) {
-            System.out.println("driver not null");
-          //  testContext.setMobDriver(driver);
-       // }
-        //   testContext.setPageObjectManager(new PageObjectManager(driver));
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
-        // Thread.sleep(5000);
-      //   wait = new WebDriverWait(driver, Duration.ofSeconds(70));
-        //  driver.manage().deleteAllCookies();
-//        try {wait.until(ExpectedConditions.alertIsPresent());}
-//        catch (Exception e) {
-//            System.out.println("Alert not present");
-//            e.printStackTrace();
-//        }
-//        driver.switchTo().alert().accept();
-        //      AndroidDriver aa = (AndroidDriver) driver;
-//       aa.pressKey(KeyEvent);
-//        ((AndroidDriver) driver).pressKeyCode
-//                        (AndroidKeyCode.BACK);
+
+        System.out.println("driver not null");
+
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(Integer.parseInt(configProperties.getProperty("implicit_wait"))));
         System.out.println("Application Started");
-        //   Thread.sleep(10000);
-//        wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(AppiumBy.id("com.ubercab:id/welcome_screen_continue")));
-//        driver.findElement(AppiumBy.id("com.ubercab:id/welcome_screen_continue")).click();
-//        if (!driver.findElements(AppiumBy.xpath("//android.widget.Button[@resource-id=\"com.ubercab:id/welcome_screen_continue\"]")).isEmpty()) {
-//            driver.findElement(AppiumBy.xpath("//android.widget.Button[@resource-id=\"com.ubercab:id/welcome_screen_continue\"]")).click();
-//        }
-//        //  Thread.sleep(10000);
-//        //  driver.switchTo().alert().accept();
-//        wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(AppiumBy.id("com.google.android.gms:id/cancel")));
-//        driver.findElement(AppiumBy.id("com.google.android.gms:id/cancel")).click();
-        //  Thread.sleep(20000);
-        //  System.out.println(driver.getTitle());
-//        SoftAssert softAssert = new SoftAssert();
-//        wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(AppiumBy.xpath("//android.widget.EditText")));
-//        softAssert.assertTrue(driver.findElement(AppiumBy.xpath("//android.widget.EditText")).isDisplayed(),"Phone number field not displayed");
-//        wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(AppiumBy.xpath("//android.widget.Button[@text=\"Continue with Google\"]")));
-//        softAssert.assertTrue(driver.findElement(AppiumBy.xpath("//android.widget.Button[@text=\"Continue with Google\"]")).isDisplayed(),"Continue field not displayed");
-//        wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(AppiumBy.xpath("//android.widget.Button[@text=\"Envelope Continue with Email\"]")));
-//        softAssert.assertTrue(driver.findElement(AppiumBy.xpath("//android.widget.Button[@text=\"Envelope Continue with Email\"]")).isDisplayed(),"Continue with Google field not displayed");
-//        // softAssert.assertTrue(driver.findElement(AppiumBy.xpath("//android.widget.Button[@resource-id=\"apple-login-btn\"]")).isDisplayed(),"Continue with Apple field not displayed");
-//        wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(AppiumBy.xpath("//android.widget.Button[@resource-id=\"continue-with-email-btn\"]")));
-//        softAssert.assertTrue(driver.findElement(AppiumBy.xpath("//android.widget.Button[@resource-id=\"continue-with-email-btn\"]")).isDisplayed(),"Continue with Email field not displayed");
-//        System.out.println("Task Complete");
-//        softAssert.assertAll();
     }
 
     private static DesiredCapabilities getDesiredCapabilities() {
+        File file = new File(configProperties.getProperty("appium:app"));
+        String absolutePath = file.getAbsolutePath();
         DesiredCapabilities cap = new DesiredCapabilities();
         // cap.setCapability("deviceName","Shiba Shankar");
-        cap.setCapability("deviceName","sdk gphone64_x86_64");
+        cap.setCapability("deviceName", configProperties.getProperty("deviceName"));
         //cap.setCapability("udid","GYOVVS7DBIQ4WSEY");
-        cap.setCapability("udid","emulator-5554");
-        cap.setCapability("platformName","Android");
+        cap.setCapability("udid", configProperties.getProperty("udid"));
+        cap.setCapability("platformName", configProperties.getProperty("platformName"));
         //cap.setCapability("platformVersion","14");
-        cap.setCapability("platformVersion","15");
-        cap.setCapability("automationName","uiAutomator2");
-        cap.setCapability("adbExecTimeout",50000);
-        cap.setCapability("appium:app","D:\\project\\NewFramework_Appium\\src\\test\\resources\\testdata\\App\\com.ecwid.android-6.2-APK4Fun.com.apk");
-       // cap.setCapability("appPackage","com.ubercab");
-       // cap.setCapability("appActivity","com.ubercab.presidio.app.core.root.RootActivity");
+        cap.setCapability("platformVersion", configProperties.getProperty("platformVersion"));
+        cap.setCapability("automationName", configProperties.getProperty("automationName"));
+        cap.setCapability("uiautomator2ServerInstallTimeout", 10000);
+        cap.setCapability("adbExecTimeout", 120000 /*Integer.parseInt(configProperties.getProperty("adbExecTimeout"))*/);
+        // cap.setCapability("appium:app","D:\\project\\Appium\\src\\test\\resources\\testdata\\App\\com.ecwid.android-6.2-APK4Fun.com.apk");
+        cap.setCapability("appium:app", absolutePath);
+        cap.setCapability("unicodeKeyboard", true);
+        cap.setCapability("resetKeyboard", true);
+        // cap.setCapability("appPackage","com.ubercab");
+        // cap.setCapability("appActivity","com.ubercab.presidio.app.core.root.RootActivity");
         return cap;
     }
+
     private static DesiredCapabilities getDesiredCapabilities1() {
         DesiredCapabilities cap = new DesiredCapabilities();
-        cap.setCapability("deviceName","Shiba Shankar");
+        cap.setCapability("deviceName", "Shiba Shankar");
         //cap.setCapability("deviceName","sdk gphone64_x86_64");
-        cap.setCapability("udid","GYOVVS7DBIQ4WSEY");
+        cap.setCapability("udid", "GYOVVS7DBIQ4WSEY");
         //cap.setCapability("udid","emulator-5554");
-        cap.setCapability("platformName","Android");
-        cap.setCapability("platformVersion","14");
+        cap.setCapability("platformName", "Android");
+        cap.setCapability("platformVersion", "14");
         //cap.setCapability("platformVersion","15");
-        cap.setCapability("automationName","uiAutomator2");
-        cap.setCapability("adbExecTimeout",50000);
-        cap.setCapability("appium:app","D:\\project\\NewFramework_Appium\\src\\test\\resources\\testdata\\App\\com.ecwid.android-6.2-APK4Fun.com.apk");
+        cap.setCapability("automationName", "uiAutomator2");
+        cap.setCapability("adbExecTimeout", 50000);
+        cap.setCapability("appium:app", "D:\\project\\NewFramework_Appium\\src\\test\\resources\\testdata\\App\\com.ecwid.android-6.2-APK4Fun.com.apk");
 
-     //   cap.setCapability("appPackage","com.ubercab");
-     //   cap.setCapability("appActivity","com.ubercab.presidio.app.core.root.RootActivity");
+        //   cap.setCapability("appPackage","com.ubercab");
+        //   cap.setCapability("appActivity","com.ubercab.presidio.app.core.root.RootActivity");
         return cap;
     }
 

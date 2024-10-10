@@ -1,7 +1,7 @@
-package com.hexure.firelight.libraies;
+package com.ce.libraies;
 
+import com.epam.healenium.SelfHealingDriver;
 import io.appium.java_client.AppiumDriver;
-import io.appium.java_client.android.AndroidDriver;
 import io.cucumber.java.Scenario;
 import lombok.Data;
 import org.openqa.selenium.WebDriver;

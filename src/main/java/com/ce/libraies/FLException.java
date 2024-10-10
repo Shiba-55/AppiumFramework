@@ -1,4 +1,4 @@
-package com.hexure.firelight.libraies;
+package com.ce.libraies;
 
 public class FLException extends RuntimeException {
     private static final long serialVersionUID = 1L;

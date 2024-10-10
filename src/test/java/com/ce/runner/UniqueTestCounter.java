@@ -1,4 +1,4 @@
-package com.hexure.firelight.runner;
+package com.ce.runner;
 
 import io.qameta.allure.Allure;
 import org.junit.runner.Description;

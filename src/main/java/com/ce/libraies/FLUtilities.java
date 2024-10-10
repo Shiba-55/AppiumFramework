@@ -1,5 +1,6 @@
-package com.hexure.firelight.libraies;
+package com.ce.libraies;
 
+import com.epam.healenium.SelfHealingDriver;
 import io.appium.java_client.AppiumBy;
 import io.appium.java_client.AppiumDriver;
 import org.apache.poi.ss.usermodel.Cell;
@@ -93,30 +94,31 @@ public class FLUtilities extends BaseClass {
 
 
     protected void sendKeys(WebDriver driver, WebElement element, String stringToInput) {
-        waitForPageToLoad(driver);
+     //   waitForPageToLoad(driver);
         syncElement(driver, element, EnumsCommon.TOVISIBLE.getText());
-        try {
-            element.clear();
-            clickElement(driver, element);
+//        try {
+//            element.clear();
+//            clickElement(driver, element);
+//            element.sendKeys(stringToInput);
+//            element.sendKeys(Keys.TAB);
+//        } catch (Exception e) {
+//            try {
+//                waitForPageToLoad(driver);
+//                syncElement(driver, element, EnumsCommon.TOCLICKABLE.getText());
+//                // Scroll the element into view
+//                ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", element);
+//                element.clear();
+//                // Move to the element using Actions class
+//                new Actions(driver).moveToElement(element).sendKeys(stringToInput).perform();
+//                element.sendKeys(Keys.TAB);
+        try{
             element.sendKeys(stringToInput);
-            element.sendKeys(Keys.TAB);
-        } catch (Exception e) {
-            try {
-                waitForPageToLoad(driver);
-                syncElement(driver, element, EnumsCommon.TOCLICKABLE.getText());
-                // Scroll the element into view
-                ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", element);
-                element.clear();
-                // Move to the element using Actions class
-                new Actions(driver).moveToElement(element).sendKeys(stringToInput).perform();
-                element.sendKeys(Keys.TAB);
             } catch (Exception e1) {
                 Log.error("SendKeys Failed ", e1);
                 throw new FLException(stringToInput + " could not be entered in element" + e1.getMessage());
             }
         }
-        waitForPageToLoad(driver);
-    }
+      //  waitForPageToLoad(driver);
 
     protected String verifyValue(WebDriver driver, WebElement element) {
         waitForPageToLoad(driver);
@@ -326,19 +328,23 @@ public class FLUtilities extends BaseClass {
         switch (locatorType.trim().toLowerCase()){
             case "id" :
                 appiumWait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(AppiumBy.id(attributeValue)));
-                element = driver.findElement(By.id(attributeValue));
+                element = driver.findElement(AppiumBy.id(attributeValue));
                 break;
             case "name" :
                 appiumWait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(AppiumBy.name(attributeValue)));
-                element = driver.findElement(By.name(attributeValue));
+                element = driver.findElement(AppiumBy.name(attributeValue));
                 break;
             case "class" :
                 appiumWait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(AppiumBy.cssSelector("." + attributeValue.replaceAll(" ", "."))));
-                element = driver.findElement(By.cssSelector("." + attributeValue.replaceAll(" ", ".")));
+                element = driver.findElement(AppiumBy.cssSelector("." + attributeValue.replaceAll(" ", ".")));
                 break;
             case "xpath" :
                 appiumWait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(AppiumBy.xpath(attributeValue)));
-                element = driver.findElement(By.xpath(attributeValue));
+                element = driver.findElement(AppiumBy.xpath(attributeValue));
+                break;
+            case "accessibility id" :
+                appiumWait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(AppiumBy.accessibilityId(attributeValue)));
+                element = driver.findElement(AppiumBy.accessibilityId(attributeValue));
                 break;
             default:
                 new FLException("Invalid locator " + locatorType);
@@ -390,7 +396,7 @@ public class FLUtilities extends BaseClass {
         }
     }
 
-    protected WebDriverWait getExplicitWait(AppiumDriver driver,TestContext testContext) {
+    protected WebDriverWait getExplicitWait(AppiumDriver driver, TestContext testContext) {
      //   testContext.setWait(new WebDriverWait(driver, Duration.ofSeconds(Integer.parseInt(configProperties.getProperty("implicit_wait")))));
         return testContext.getWait();
     }

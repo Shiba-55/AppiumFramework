@@ -1,33 +1,40 @@
-package com.hexure.firelight.stepdefinitions;
+package com.ce.stepdefinitions;
 
-import com.hexure.firelight.libraies.FLException;
-import com.hexure.firelight.libraies.FLUtilities;
-import com.hexure.firelight.libraies.TestContext;
-import io.appium.java_client.AppiumBy;
+import com.ce.libraies.FLUtilities;
+import com.ce.libraies.TestContext;
+import com.epam.healenium.SelfHealingDriver;
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.TouchAction;
+import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.android.nativekey.AndroidKey;
+import io.appium.java_client.android.nativekey.KeyEvent;
+import io.appium.java_client.touch.WaitOptions;
+import io.appium.java_client.touch.offset.PointOption;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
-import io.qameta.allure.Allure;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.Alert;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.time.Duration;
 
 public class CommonStepdefinition extends FLUtilities {
 
     private static final Logger Log = LogManager.getLogger(CommonStepdefinition.class);
     private AppiumDriver driver;
     private TestContext testContext;
-
+    private WebDriverWait appiumWait;
     public CommonStepdefinition(TestContext context) {
         testContext = context;
         driver = context.getMobDriver();
+        appiumWait  = new WebDriverWait(driver, Duration.ofSeconds(Integer.parseInt(configProperties.getProperty("explicit_wait"))));
+
     }
 
     @Given("Open page {string}")
@@ -45,6 +52,7 @@ public class CommonStepdefinition extends FLUtilities {
     @Then("User Enters value {string} in  {string} {string} having {string} {string}")
     public void enterValueInTextboxHaving(String valueToSend, String wizardType, String fieldName, String locator, String attributeValue) {
         sendKeys(driver, elementByLocator(driver, locator, null, null, attributeValue), valueToSend);
+        addPropertyValueInJSON(testContext.getTestCaseID(),testContext,fieldName,valueToSend);
     }
 
     @Then("User Enters value from JSON {string} in  {string} {string} having {string} {string}")
@@ -68,18 +76,8 @@ public class CommonStepdefinition extends FLUtilities {
     }
 
     @Given("User is on login page for TestCase {string}")
-    public void userIsOnLoginPage(String testCaseID) {
-       // commonSetup(testCaseID);
-       // getMobDriver(testContext);
-//        try {getExplicitWait(testContext.getMobDriver(), testContext).until(ExpectedConditions.alertIsPresent());
-//            driver.switchTo().alert().accept();
-//            System.out.println("Alert present");
-//        }
-//        catch (Exception e) {
-//            System.out.println("Alert not present");
-//            e.printStackTrace();
-//            throw new FLException("Alert not present >> "+e.getMessage());
-//        }
+    public void userIsOnLoginPage(String testCaseID) throws InterruptedException {
+        commonSetup(testCaseID);
     }
 
     private void commonSetup(String testCaseID) {
@@ -110,6 +108,50 @@ public class CommonStepdefinition extends FLUtilities {
     @Then("User Verifies text of {string} {string} Should be {string} having {string} {string}")
     public void userVerifiesTextOfShouldBeHaving(String fieldName, String wizardType, String expectedText, String locator, String attributeValue) {
         Assert.assertEquals("Text did not match", expectedText, elementByLocator(driver,locator,null,null,attributeValue).getText().trim());
+    }
+
+    @Then("User Verifies element is enabled {string} {string} having {string} {string}")
+    public void userVerifiesElementIsEnabledHaving(String fieldName, String wizardType, String locator, String attributeValue) {
+        Assert.assertTrue(fieldName + " was not enabled", elementByLocator(driver, locator, null, null, attributeValue).isEnabled());
+    }
+
+    @Then("User Verifies element is selected {string} {string} having {string} {string}")
+    public void userVerifiesElementIsSelectedHaving(String fieldName, String wizardType, String locator, String attributeValue) {
+        Assert.assertTrue(fieldName + " was not selected", elementByLocator(driver, locator, null, null, attributeValue).isSelected());
+
+    }
+
+    @Then("User Clicks back Button on Mobile")
+    public void userClicksBackButtonOnMobile() {
+        driver.navigate().back();
+    }
+
+    @Then("User Accepts alert")
+    public void userAcceptsAlert() {
+       // WebDriverWait appiumWait = new WebDriverWait(driver, Duration.ofSeconds(Integer.parseInt(configProperties.getProperty("explicit_wait"))));
+       try {
+           Alert yes = appiumWait.until(ExpectedConditions.alertIsPresent());
+           yes.accept();
+       } catch (Exception e) {
+           System.out.println("No Alert");
+       }
+
+    }
+
+    @Then("User Dismiss alert")
+    public void userDismissAlert() {
+        try {
+            Alert yes = appiumWait.until(ExpectedConditions.alertIsPresent());
+            yes.dismiss();
+        } catch (Exception e) {
+            System.out.println("No Alert");
+        }
+    }
+
+    @Then("User Clicks home Button on Mobile")
+    public void userClicksHomeButtonOnMobile() {
+        AndroidDriver driver1 = (AndroidDriver) driver;
+        driver1.pressKey(new KeyEvent(AndroidKey.HOME));
     }
 
 }

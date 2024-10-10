@@ -1,4 +1,4 @@
-package com.hexure.firelight.runner;
+package com.ce.runner;
 
 import io.cucumber.junit.Cucumber;
 import io.cucumber.junit.CucumberOptions;
@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @CucumberOptions(
         features = {"classpath:"},
         tags = "@Test",
-        glue = {"com.hexure.firelight.stepdefinitions"},
+        glue = {"com.ce.stepdefinitions"},
         monochrome = true,
         publish = true
 )

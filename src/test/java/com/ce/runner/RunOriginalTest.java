@@ -1,4 +1,4 @@
-package com.hexure.firelight.runner;
+package com.ce.runner;
 
 import io.cucumber.junit.Cucumber;
 import io.cucumber.junit.CucumberOptions;
@@ -18,7 +18,7 @@ import org.junit.runner.RunWith;
         },
         features = {"classpath:"},
         tags = "",
-        glue = {"com.hexure.firelight.stepdefinitions"},
+        glue = {"com.ce.stepdefinitions"},
         monochrome = true,
         publish = true
 )

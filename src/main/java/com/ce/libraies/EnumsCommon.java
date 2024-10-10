@@ -1,4 +1,4 @@
-package com.hexure.firelight.libraies;
+package com.ce.libraies;
 
 import lombok.Getter;
 
@@ -17,7 +17,7 @@ public enum EnumsCommon {
     REUSABLE_FILES_PATH(System.getProperty("user.dir") + "\\src\\test\\resources\\testdata\\ReusableMethods\\"),
     FIREFOXBROWSER("Firefox"),
     FEATUREFILESPATH(System.getProperty("user.dir") + "/src/test/resources/features/"),
-    RUNNERFILESPATH(System.getProperty("user.dir") + "/src/test/java/com/hexure/firelight/runner/");
+    RUNNERFILESPATH(System.getProperty("user.dir") + "/src/test/java/com/ce/runner/");
 
     private final String text;
 

@@ -1,4 +1,4 @@
-package com.hexure.firelight.libraies.Enums;
+package com.ce.libraies.Enums;
 
 import lombok.Getter;
 

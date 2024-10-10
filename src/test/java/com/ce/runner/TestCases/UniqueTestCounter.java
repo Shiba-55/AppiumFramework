@@ -1,4 +1,4 @@
-package com.hexure.firelight.runner.TestCases;
+package com.ce.runner.TestCases;
 
 import io.qameta.allure.Allure;
 import org.junit.runner.Description;

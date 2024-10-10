@@ -1,8 +1,9 @@
-package com.hexure.firelight.stepdefinitions;
+package com.ce.stepdefinitions;
 
-import com.hexure.firelight.libraies.PageObjectManager;
-import com.hexure.firelight.libraies.FLUtilities;
-import com.hexure.firelight.libraies.TestContext;
+import com.ce.libraies.PageObjectManager;
+import com.ce.libraies.FLUtilities;
+import com.ce.libraies.TestContext;
+import io.appium.java_client.android.AndroidDriver;
 import io.cucumber.java.*;
 import io.qameta.allure.Allure;
 import lombok.Data;
@@ -28,18 +29,13 @@ public class Hooks extends FLUtilities {
         loadConfigData(testContext);
         try {
             if (testContext.getMobDriver() == null) {
-//           ProcessBuilder pb = new ProcessBuilder("cmd", "/c", "upsert.bat");
-//           File dir = new File("D:\\project\\Appium\\src\\test\\resources\\Emulator.bat");
-//           pb.directory(dir);
-//           Process p = pb.start();
-
                 String[] command1 = {"cmd.exe", "/C", "Start", "D:\\project\\Appium\\src\\test\\resources\\AppiumStart.bat"};
                 Process p1 = Runtime.getRuntime().exec(command1);
-                Thread.sleep(10000);
                 System.out.println("Appium Started");
+                Thread.sleep(20000);
                 String[] command = {"cmd.exe", "/C", "Start", "D:\\project\\Appium\\src\\test\\resources\\Emulator.bat"};
                 Process p = Runtime.getRuntime().exec(command);
-                Thread.sleep(4000);
+                Thread.sleep(22000);
                 System.out.println("Emulator Started");
 
             }
@@ -51,73 +47,32 @@ public class Hooks extends FLUtilities {
         if (testContext.getMobDriver() == null) {
             testContext.setMobDriver(getMobDriver(testContext));
         }
-        testContext.setPageObjectManager(new PageObjectManager(testContext.getDriver()));
+      //  testContext.setPageObjectManager(new PageObjectManager(testContext.getDriver()));
         testContext.setScenario(scenario);
     }
 
-    @After(order = 0)
+    @After
     public void cleanUp() throws Exception {
-        closeBrowser(testContext);
-        System.out.println("Closed");
-//        try {
-//          //  Runtime.getRuntime().exec("taskkill /f /im cmd.exe") ;
-//          //  Runtime.getRuntime().exec("command.exe  /C" + "exit");
-//            String[] command = {"cmd.exe", "/C", "Start", "D:\\project\\Appium\\src\\test\\resources\\AllureReport.bat"};
-//            Process p = Runtime.getRuntime().exec(command);
-//            System.out.println(" CMD Closed");
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            throw new Exception(e);
-//        }
+      try {
+          closeBrowser(testContext);
+          System.out.println("Closed");
+      } finally {
+          WindowsProcessKiller pKiller = new WindowsProcessKiller();
 
-//        try {
-//            // Command to list all cmd.exe processes
-//            String commandList = "wmic process where \"name='cmd.exe'\" get ProcessId";
-//
-//            // Execute the command to get process IDs
-//            Process listProcess = Runtime.getRuntime().exec(commandList);
-//
-//            // Read the output
-//            BufferedReader reader = new BufferedReader(new InputStreamReader(listProcess.getInputStream()));
-//            String line;
-//            while ((line = reader.readLine()) != null) {
-//                line = line.trim();
-//                if (line.matches("\\d+")) {
-//                    // Skip the first line (header) and get process IDs
-//                    String commandKill = "taskkill /F /PID " + line;
-//                    Runtime.getRuntime().exec(commandKill);
-//                }
-//            }
-//
-//            // Wait for all commands to complete
-//            listProcess.waitFor();
-//
-//            System.out.println("All Command Prompt windows have been attempted to be closed.");
-//        } catch (IOException e) {
-//            System.err.println("IOException occurred: " + e.getMessage());
-//        } catch (InterruptedException e) {
-//            System.err.println("InterruptedException occurred: " + e.getMessage());
-//        }
+          // To kill a command prompt
+          String processName = "cmd.exe";
+          boolean isRunning = pKiller.isProcessRunning(processName);
 
-        WindowsProcessKiller pKiller = new WindowsProcessKiller();
+          System.out.println("is " + processName + " running : " + isRunning);
 
-        // To kill a command prompt
-        String processName = "cmd.exe";
-        boolean isRunning = pKiller.isProcessRunning(processName);
+          if (isRunning) {
+              WindowsProcessKiller.killProcess(processName);
+              System.out.println("All Command Prompt windows have been attempted to be closed.");
 
-        System.out.println("is " + processName + " running : " + isRunning);
-
-        if (isRunning) {
-            WindowsProcessKiller.killProcess(processName);
-            System.out.println("All Command Prompt windows have been attempted to be closed.");
-
-        }
-
-        else {
-            System.out.println("Not able to find the process : "+processName);
-        }
-
+          } else {
+              System.out.println("Not able to find the process : " + processName);
+          }
+      }
 
     }
 

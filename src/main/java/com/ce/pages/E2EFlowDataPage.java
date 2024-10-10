@@ -1,11 +1,12 @@
-package com.hexure.firelight.pages;
+package com.ce.pages;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.hexure.firelight.libraies.Enums.EnumsTestingTypes;
-import com.hexure.firelight.libraies.EnumsCommon;
-import com.hexure.firelight.libraies.FLException;
-import com.hexure.firelight.libraies.FLUtilities;
+import com.ce.libraies.Enums.EnumsTestingTypes;
+import com.ce.libraies.EnumsCommon;
+import com.ce.libraies.FLException;
+import com.ce.libraies.FLUtilities;
+import io.appium.java_client.AppiumDriver;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.poi.ss.usermodel.*;
@@ -19,6 +20,8 @@ import org.openqa.selenium.support.PageFactory;
 import java.io.*;
 import java.util.*;
 
+import static org.openqa.selenium.support.PageFactory.initElements;
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class E2EFlowDataPage extends FLUtilities {
@@ -26,9 +29,10 @@ public class E2EFlowDataPage extends FLUtilities {
     JSONObject jsonObject = new JSONObject();
     JSONObject jsonTestData = new JSONObject();
 
-    public E2EFlowDataPage(WebDriver driver) {
-        initElements(driver);
-    }
+  //  public E2EFlowDataPage(AppiumDriver driver) {
+//    public E2EFlowDataPage(WebDriver driver) {
+//        initElements(driver);
+//    }
 
     public String getCellValue(Cell cell) {
         // Initialize a string to store the cell value
@@ -48,9 +52,9 @@ public class E2EFlowDataPage extends FLUtilities {
         return excelValue;
     }
 
-    private void initElements(WebDriver driver) {
-        PageFactory.initElements(driver, this);
-    }
+//    private void initElements(WebDriver driver) {
+//        PageFactory.initElements(driver, this);
+//    }
 
     public void createForesightTestDataInterface(String excelFile) {
         // Define the file path using a common absolute path and the provided Excel file name
@@ -360,7 +364,7 @@ public class E2EFlowDataPage extends FLUtilities {
                 return "Then " + steps + " is \"" + testData + "\"";
             case "Enters value":
             case "Enters value from JSON":
-                return "Then User " + steps + " \"" + testData + "\" in " +" \"" + wizardControlTypes + "\" \""+ fieldName +"\" having \"" + locatorType + "\" \"" + commonTag + "\"";
+                return "Then User " + steps + " \"" + testData + "\" in " + " \"" + wizardControlTypes + "\" \"" + fieldName + "\" having \"" + locatorType + "\" \"" + commonTag + "\"";
 //                if (locatorType.contains("xpath")) {
 //                    return "Then " + steps + " \"" + testData + "\" in \"" + wizardControlTypes + "\" having \"" + locatorType + "\" \"" + "with attribute " + attribute + " and attribute value " + commonTag + "\"";
 //                } else {
@@ -368,15 +372,23 @@ public class E2EFlowDataPage extends FLUtilities {
 //
 //                }
             case "Clicks element":
-                return "Then User " + steps + " \""+ fieldName +"\""+" \"" + wizardControlTypes + "\" having \"" + locatorType + "\" \"" + commonTag + "\"";
+                return "Then User " + steps + " \"" + fieldName + "\"" + " \"" + wizardControlTypes + "\" having \"" + locatorType + "\" \"" + commonTag + "\"";
             case "Verifies Default Value":
-                return "Then User " + steps + " \""+ fieldName +"\""+" \"" + wizardControlTypes + "\" having \"" + locatorType + "\" \"" + commonTag + "\" is \"" + testData + "\"";
+                return "Then User " + steps + " \"" + fieldName + "\"" + " \"" + wizardControlTypes + "\" having \"" + locatorType + "\" \"" + commonTag + "\" is \"" + testData + "\"";
             case "Selects value":
-                return "Then User " + steps + " \"" + testData + "\" for \""+ fieldName +"\""+" \"" + wizardControlTypes + "\" having \"" + locatorType + "\" \"" + commonTag + "\"";
+                return "Then User " + steps + " \"" + testData + "\" for \"" + fieldName + "\"" + " \"" + wizardControlTypes + "\" having \"" + locatorType + "\" \"" + commonTag + "\"";
             case "Verifies element":
-                return "Then User " + steps + " \""+ fieldName +"\""+" \"" + wizardControlTypes +"\" having \"" + locatorType + "\" \"" + commonTag + "\"";
+            case "Verifies element is enabled":
+            case "Verifies element is selected":
+                return "Then User " + steps + " \"" + fieldName + "\"" + " \"" + wizardControlTypes + "\" having \"" + locatorType + "\" \"" + commonTag + "\"";
             case "Verifies text":
-                return "Then User " + steps + " of \""+ fieldName +"\""+" \"" + wizardControlTypes +"\" Should be \""+testData+"\" having \"" + locatorType + "\" \"" + commonTag + "\"";
+                return "Then User " + steps + " of \"" + fieldName + "\"" + " \"" + wizardControlTypes + "\" Should be \"" + testData + "\" having \"" + locatorType + "\" \"" + commonTag + "\"";
+            case "Clicks back Button on Mobile":
+            case "Clicks home Button on Mobile":
+            case "Accepts alert":
+            case "Dismiss alert":
+            case "Open notification on Mobile":
+                return "Then User " + steps;
             case "Create Reusable Method":
                 String reusableFile = EnumsCommon.REUSABLE_FILES_PATH.getText() + fileName + ".txt";
                 File file = new File(reusableFile);
@@ -446,7 +458,7 @@ public class E2EFlowDataPage extends FLUtilities {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(EnumsCommon.RUNNERFILESPATH.getText() + "RunOriginalTest.java"));
             while ((line = reader.readLine()) != null) {
-                line = line.replaceAll("com.hexure.firelight.runner", "com.hexure.firelight.runner.TestCases");
+                line = line.replaceAll("com.ce.runner", "com.ce.runner.TestCases");
                 line = line.replaceAll("RunOriginalTest", testingType + "_" + scenario + "_" + "RunTest");
                 line = replaceLine(line, "tags = ", "\t\ttags = \"@" + testingType + "-" + scenario + "\",");
                 lines.add(line);
@@ -474,7 +486,7 @@ public class E2EFlowDataPage extends FLUtilities {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(EnumsCommon.RUNNERFILESPATH.getText() + "UniqueTestCounter.java"));
             while ((line = reader.readLine()) != null) {
-                line = replaceLine(line, "package com.hexure.firelight.runner;", "package com.hexure.firelight.runner.TestCases;");
+                line = replaceLine(line, "package com.ce.runner;", "package com.ce.runner.TestCases;");
                 lines.add(line);
             }
             reader.close();
