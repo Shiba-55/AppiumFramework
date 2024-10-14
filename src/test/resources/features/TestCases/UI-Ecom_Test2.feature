@@ -47,3 +47,4 @@ Feature: Appium Testing
 		Then User Verifies element "Sign In with Email" "Anchor Link" having "id" "com.ecwid.android:id/fragment_onboarding_bottom_sheet_button_sign_in_with_email"
 		Then User Clicks element "Sign In with QR Code" "Anchor Link" having "id" "com.ecwid.android:id/fragment_onboarding_bottom_sheet_button_sign_in_with_qr"
 		Then User Accepts alert
+
