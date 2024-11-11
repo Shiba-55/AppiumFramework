@@ -1,7 +1,8 @@
 package com.ce.libraies;
 
-import com.epam.healenium.SelfHealingDriver;
+
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.cucumber.java.Scenario;
 import lombok.Data;
 import org.openqa.selenium.WebDriver;
@@ -26,4 +27,7 @@ public class TestContext {
     private String browser = null;
     private String VM_Name = null;
     private WebDriverWait wait = null;
+    private AppiumDriverLocalService service;
+    private String udid=null;
+    private String deviceName=null;
 }

@@ -1,8 +1,8 @@
 package com.ce.stepdefinitions;
 
+import com.ce.libraies.DriverManager;
 import com.ce.libraies.FLUtilities;
 import com.ce.libraies.TestContext;
-import com.epam.healenium.SelfHealingDriver;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.AndroidDriver;
@@ -17,12 +17,14 @@ import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.File;
 import java.time.Duration;
+import java.util.List;
 
 public class CommonStepdefinition extends FLUtilities {
 
@@ -32,7 +34,8 @@ public class CommonStepdefinition extends FLUtilities {
     private WebDriverWait appiumWait;
     public CommonStepdefinition(TestContext context) {
         testContext = context;
-        driver = context.getMobDriver();
+        driver = new DriverManager().getDriver();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(Integer.parseInt(configProperties.getProperty("implicit_wait"))));
         appiumWait  = new WebDriverWait(driver, Duration.ofSeconds(Integer.parseInt(configProperties.getProperty("explicit_wait"))));
 
     }
@@ -65,6 +68,14 @@ public class CommonStepdefinition extends FLUtilities {
         clickElement(driver, elementByLocator(driver, locator, null, null, attributeValue));
     }
 
+    @Then("User Clicks element if present {string} {string} having {string} {string}")
+    public void clicksElementIfPresent(String fieldName, String wizardType, String locator, String attributeValue) {
+        List<WebElement> elements = elementsByLocator(driver, locator, null, null, attributeValue);
+        if(elements.size() > 0) {
+            clickElement(driver, elements.get(0));
+        }
+    }
+
     @Then("User Verifies Default Value {string} having {string} {string} is {string}")
     public void verifyValue(String wizardType, String locator, String attributeValue, String value) {
         Assert.assertTrue(value.equalsIgnoreCase(verifyValue(driver, elementByLocator(driver, locator, null, null, attributeValue))));
@@ -95,14 +106,15 @@ public class CommonStepdefinition extends FLUtilities {
     @Given("I am on the login screen")
     public void i_am_on_the_login_screen() {
         // Write code here that turns the phrase above into concrete actions
-        captureScreenshot(driver,testContext,true);
         System.out.println("SSM Successful");
 
     }
 
     @Then("User Verifies element {string} {string} having {string} {string}")
     public void userVerifiesElementHaving(String fieldName, String wizardType, String locator, String attributeValue) {
-        Assert.assertTrue(fieldName + " was not displayed", elementByLocator(driver, locator, null, null, attributeValue).isDisplayed());
+        WebElement element = elementByLocator(driver, locator, null, null, attributeValue);
+        appiumWait.until(ExpectedConditions.visibilityOf(element));
+        Assert.assertTrue(fieldName + " was not displayed", element.isDisplayed());
     }
 
     @Then("User Verifies text of {string} {string} Should be {string} having {string} {string}")
@@ -154,4 +166,21 @@ public class CommonStepdefinition extends FLUtilities {
         driver1.pressKey(new KeyEvent(AndroidKey.HOME));
     }
 
+    @Then("User Waits for {int} milliseconds")
+    public void userWaitsForMilliseconds(int time) throws InterruptedException {
+        Thread.sleep(time);
+    }
+
+    @Then("User Verifies element in List {string} in {string} {string} having {string} {string}")
+    public void userVerifiesElementInListInHaving(String expectdData, String fieldName, String wizardType, String locator, String attributeValue) {
+        List<WebElement> elements = elementsByLocator(driver, locator, null, null, attributeValue);
+        boolean isPresent = false;
+        for (WebElement element : elements){
+           if( element.getText().trim().equals(expectdData)){
+               isPresent = true;
+               break;
+            }
+        }
+        Assert.assertTrue(expectdData+" not present in "+fieldName,isPresent);
+    }
 }

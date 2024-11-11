@@ -1,8 +1,10 @@
 package com.ce.libraies;
 
-import com.epam.healenium.appium.wrapper.DriverWrapper;
+
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.service.local.AppiumDriverLocalService;
+import io.appium.java_client.service.local.AppiumServiceBuilder;
 import org.apache.commons.io.FileUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -38,7 +40,7 @@ public class BaseClass {
      *
      * @param testContext The TestContext class reference
      */
-    protected void loadConfigData(TestContext testContext) {
+    public void loadConfigData(TestContext testContext) {
         readConfigFile();
         //  setEnvironment(testContext);
     }
@@ -75,9 +77,9 @@ public class BaseClass {
      * <p>
      * Implicit Wait: Value for Implicit Wait can be changed from config.properties file.
      */
-    protected AppiumDriver getMobDriver(TestContext testContext) {
+    public AppiumDriver getMobDriver(TestContext testContext,String udid) {
         try {
-            openMobileApp();
+            openMobileApp(udid);
 
         } catch (Exception e) {
             Log.error("Loading WebDriver failed ", e);
@@ -487,17 +489,13 @@ public class BaseClass {
         }
     }
 
-    public void openMobileApp() {
-        DesiredCapabilities cap = getDesiredCapabilities();
-        URL url = null;
-        try {
-            url = new URL("http://127.0.0.1:4723/");
-        } catch (MalformedURLException m) {
-            m.printStackTrace();
-        }
+    public void openMobileApp(String udid) {
+        DesiredCapabilities cap = getDesiredCapabilities(udid);
 
-//        AppiumDriver driver = new AppiumDriver(url, cap);
-        AndroidDriver androidDriver = new AndroidDriver(url, cap);
+        AppiumDriverLocalService service = new AppiumServiceBuilder().usingAnyFreePort().build();
+        service.start();
+        new TestContext().setService(service);
+        AndroidDriver androidDriver = new AndroidDriver(service.getUrl(), cap);
         if (androidDriver.isDeviceLocked()) {
             androidDriver.unlockDevice();
         }
@@ -510,26 +508,19 @@ public class BaseClass {
         System.out.println("Application Started");
     }
 
-    private static DesiredCapabilities getDesiredCapabilities() {
+    private static DesiredCapabilities getDesiredCapabilities(String udid) {
+        TestContext testContext = new TestContext();
         File file = new File(configProperties.getProperty("appium:app"));
         String absolutePath = file.getAbsolutePath();
         DesiredCapabilities cap = new DesiredCapabilities();
-        // cap.setCapability("deviceName","Shiba Shankar");
-        cap.setCapability("deviceName", configProperties.getProperty("deviceName"));
-        //cap.setCapability("udid","GYOVVS7DBIQ4WSEY");
-        cap.setCapability("udid", configProperties.getProperty("udid"));
+        cap.setCapability("udid", udid);
         cap.setCapability("platformName", configProperties.getProperty("platformName"));
-        //cap.setCapability("platformVersion","14");
-        cap.setCapability("platformVersion", configProperties.getProperty("platformVersion"));
         cap.setCapability("automationName", configProperties.getProperty("automationName"));
         cap.setCapability("uiautomator2ServerInstallTimeout", 10000);
         cap.setCapability("adbExecTimeout", 120000 /*Integer.parseInt(configProperties.getProperty("adbExecTimeout"))*/);
-        // cap.setCapability("appium:app","D:\\project\\Appium\\src\\test\\resources\\testdata\\App\\com.ecwid.android-6.2-APK4Fun.com.apk");
         cap.setCapability("appium:app", absolutePath);
         cap.setCapability("unicodeKeyboard", true);
         cap.setCapability("resetKeyboard", true);
-        // cap.setCapability("appPackage","com.ubercab");
-        // cap.setCapability("appActivity","com.ubercab.presidio.app.core.root.RootActivity");
         return cap;
     }
 

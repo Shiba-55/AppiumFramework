@@ -14,6 +14,7 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.PageFactory;
 
@@ -56,7 +57,7 @@ public class E2EFlowDataPage extends FLUtilities {
 //        PageFactory.initElements(driver, this);
 //    }
 
-    public void createForesightTestDataInterface(String excelFile) {
+    public void createForesightTestDataInterface(String excelFile) throws IOException, ParseException {
         // Define the file path using a common absolute path and the provided Excel file name
         String filePath = EnumsCommon.ABSOLUTE_FILES_PATH.getText() + excelFile;
         boolean flag = true;
@@ -66,8 +67,8 @@ public class E2EFlowDataPage extends FLUtilities {
 
         List<String> testTypes = Arrays.asList(EnumsTestingTypes.ENUMSTESTINGTYPES.getText().split(", "));
         // Use try-with-resources to ensure the FileInputStream and XSSFWorkbook are closed properly
-        try (FileInputStream file = new FileInputStream(filePath);
-             XSSFWorkbook workbook = new XSSFWorkbook(file)) {
+         FileInputStream file = new FileInputStream(filePath);
+             XSSFWorkbook workbook = new XSSFWorkbook(file) ;
 
             // Delete existing runner and feature files
             deleteRunnerFeature(EnumsCommon.RUNNERFILESPATH.getText() + "TestCases");
@@ -131,13 +132,15 @@ public class E2EFlowDataPage extends FLUtilities {
 
             // Create a unique counter which will keep track of rerun count
             createUniqueCounter("ForeSightTest");
-        } catch (IOException e) {
-            // Handle exceptions related to file access
-            throw new FLException("File is inaccessible: " + e.getMessage());
-        } catch (Exception e) {
-            // Handle any other exceptions that may occur
-            throw new FLException("Reading Properties File Failed: " + e.getMessage());
-        }
+            // Create a RunnerBase which will keep track for testng.xml
+            createRunnerBase("ForeSightTest");
+//        } catch (IOException e) {
+//            // Handle exceptions related to file access
+//            throw new FLException("File is inaccessible: " + e.getMessage());
+//        } catch (Exception e) {
+//            // Handle any other exceptions that may occur
+//            throw new FLException("Reading Properties File Failed: " + e.getMessage());
+//        }
     }
 
     /**
@@ -148,11 +151,11 @@ public class E2EFlowDataPage extends FLUtilities {
      * @param scenario     - product name
      * @param testCaseName - Spec from client
      */
-    public void createUIFeatureFile(String featureName, String description, String scenario, String testCaseName, String testCaseSheet, String testingType, JSONObject jsonTestData) {
+    public void createUIFeatureFile(String featureName, String description, String scenario, String testCaseName, String testCaseSheet, String testingType, JSONObject jsonTestData) throws IOException {
         List<String> lines = new ArrayList<>();
         File tempFile = null;
         String line;
-        try {
+
             lines.add("Feature: " + featureName + "\n");
             lines.add("\t" + description + "\n");
             lines.add("\t@" + testingType + "-" + scenario);
@@ -225,14 +228,14 @@ public class E2EFlowDataPage extends FLUtilities {
                 writer.write(line1 + "\n");
             writer.close();
             System.out.println("Feature File Created");
-            System.out.println("url = " + configProperties.getProperty("QA.url"));
+//            System.out.println("url = " + configProperties.getProperty("QA.url"));
             updateJSON(jsonTestData, testingType, scenario, tempJson);
 //            masterJson.put(testingType + "-" + scenario, tempJson);
-        } catch (IOException e) {
-            throw new FLException("File is inaccessible" + e.getMessage());
-        } catch (Exception e) {
-            throw new FLException("Reading Properties File Failed" + e.getMessage());
-        }
+//        } catch (IOException e) {
+//            throw new FLException("File is inaccessible" + e.getMessage());
+//        } catch (Exception e) {
+//            throw new FLException("Reading Properties File Failed" + e.getMessage());
+//        }
     }
 
     public void updateJSON(JSONObject jsonTestData, String testingType, String scenario, JSONObject tempJson) {
@@ -372,6 +375,7 @@ public class E2EFlowDataPage extends FLUtilities {
 //
 //                }
             case "Clicks element":
+            case "Clicks element if present":
                 return "Then User " + steps + " \"" + fieldName + "\"" + " \"" + wizardControlTypes + "\" having \"" + locatorType + "\" \"" + commonTag + "\"";
             case "Verifies Default Value":
                 return "Then User " + steps + " \"" + fieldName + "\"" + " \"" + wizardControlTypes + "\" having \"" + locatorType + "\" \"" + commonTag + "\" is \"" + testData + "\"";
@@ -389,6 +393,8 @@ public class E2EFlowDataPage extends FLUtilities {
             case "Dismiss alert":
             case "Open notification on Mobile":
                 return "Then User " + steps;
+            case "Verifies element in List":
+                return "Then User " + steps + " \""+ testData +"\" in \""+ fieldName + "\"" + " \"" + wizardControlTypes + "\" having \"" + locatorType + "\" \"" + commonTag + "\"";
             case "Create Reusable Method":
                 String reusableFile = EnumsCommon.REUSABLE_FILES_PATH.getText() + fileName + ".txt";
                 File file = new File(reusableFile);
@@ -421,6 +427,8 @@ public class E2EFlowDataPage extends FLUtilities {
                 }
                 reader.close();
                 return linesResult.toString();
+            case "":
+                return "";
             default:
                 throw new FLException(steps + " Did not match");
                 //return "";
@@ -491,6 +499,28 @@ public class E2EFlowDataPage extends FLUtilities {
             }
             reader.close();
             File tempFile = new File(EnumsCommon.RUNNERFILESPATH.getText() + "/TestCases/UniqueTestCounter.java");
+            tempFile.getParentFile().mkdirs();
+            FileWriter runnerFile = new FileWriter(tempFile);
+            BufferedWriter writer = new BufferedWriter(runnerFile);
+            for (String line1 : lines)
+                writer.write(line1 + "\n");
+            writer.close();
+        } catch (IOException e) {
+            throw new FLException("File is inaccessible" + e.getMessage());
+        }
+    }
+
+    public void createRunnerBase(String directory) {
+        ArrayList<String> lines = new ArrayList<>();
+        String line;
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(EnumsCommon.RUNNERFILESPATH.getText() + "RunnerBase.java"));
+            while ((line = reader.readLine()) != null) {
+                line = replaceLine(line, "package com.ce.runner;", "package com.ce.runner.TestCases;");
+                lines.add(line);
+            }
+            reader.close();
+            File tempFile = new File(EnumsCommon.RUNNERFILESPATH.getText() + "/TestCases/RunnerBase.java");
             tempFile.getParentFile().mkdirs();
             FileWriter runnerFile = new FileWriter(tempFile);
             BufferedWriter writer = new BufferedWriter(runnerFile);

@@ -1,6 +1,5 @@
 package com.ce.libraies;
 
-import com.epam.healenium.SelfHealingDriver;
 import io.appium.java_client.AppiumBy;
 import io.appium.java_client.AppiumDriver;
 import org.apache.poi.ss.usermodel.Cell;
@@ -325,31 +324,31 @@ public class FLUtilities extends BaseClass {
     protected WebElement elementByLocator( WebDriver driver, String locatorType, String tagName, String attribute, String attributeValue) {
         WebElement element = null;
         WebDriverWait appiumWait = new WebDriverWait(driver, Duration.ofSeconds(Integer.parseInt(configProperties.getProperty("explicit_wait"))));
-        switch (locatorType.trim().toLowerCase()){
-            case "id" :
-                appiumWait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(AppiumBy.id(attributeValue)));
-                element = driver.findElement(AppiumBy.id(attributeValue));
-                break;
-            case "name" :
-                appiumWait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(AppiumBy.name(attributeValue)));
-                element = driver.findElement(AppiumBy.name(attributeValue));
-                break;
-            case "class" :
-                appiumWait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(AppiumBy.cssSelector("." + attributeValue.replaceAll(" ", "."))));
-                element = driver.findElement(AppiumBy.cssSelector("." + attributeValue.replaceAll(" ", ".")));
-                break;
-            case "xpath" :
-                appiumWait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(AppiumBy.xpath(attributeValue)));
-                element = driver.findElement(AppiumBy.xpath(attributeValue));
-                break;
-            case "accessibility id" :
-                appiumWait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(AppiumBy.accessibilityId(attributeValue)));
-                element = driver.findElement(AppiumBy.accessibilityId(attributeValue));
-                break;
-            default:
-                new FLException("Invalid locator " + locatorType);
-        }
-
+            switch (locatorType.trim().toLowerCase()) {
+                case "id":
+                      appiumWait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(AppiumBy.id(attributeValue)));
+                    element = driver.findElement(AppiumBy.id(attributeValue));
+                    break;
+                case "name":
+                      appiumWait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(AppiumBy.name(attributeValue)));
+                    element = driver.findElement(AppiumBy.name(attributeValue));
+                    break;
+                case "class":
+                    appiumWait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(AppiumBy.cssSelector("." + attributeValue.replaceAll(" ", "."))));
+                    element = driver.findElement(AppiumBy.cssSelector("." + attributeValue.replaceAll(" ", ".")));
+                    break;
+                case "xpath":
+                  //  appiumWait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(AppiumBy.xpath(attributeValue)));
+                    appiumWait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(AppiumBy.xpath(attributeValue)));
+                    element = driver.findElement(AppiumBy.xpath(attributeValue));
+                    break;
+                case "accessibility id":
+                    appiumWait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(AppiumBy.accessibilityId(attributeValue)));
+                    element = driver.findElement(AppiumBy.accessibilityId(attributeValue));
+                    break;
+                default:
+                    new FLException("Invalid locator " + locatorType);
+            }
         return element;
     }
 
